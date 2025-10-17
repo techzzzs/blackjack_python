@@ -2,7 +2,7 @@ import pygame
 import sys
 import time
 from card_randomizer import shuffle, shuffle_add, shuffle_remove, count_score
-from draw import draw_text
+from draw import draw_text, draw_image
 
 pygame.init()
 running = True
@@ -45,22 +45,6 @@ standb_h = 78
 standb_rect = pygame.Rect(standb_x, standb_y, standb_w, standb_h)
 
 
-# draw text
-def draw_text(text, x, y, width, hight, red, green, blue):
-    text = font.render(text, True, (red, green, blue))
-    text_box = pygame.Rect(x, y, width, hight)
-    text_box_center = text.get_rect(center=text_box.center)
-    screen.blit(text, text_box_center)
-
-
-# draw image
-def draw_image(file, x, y, scale):
-    image = pygame.image.load(file)
-    image = pygame.Surface.convert_alpha(image)
-    old_x, old_y = image.get_size()
-    image = pygame.transform.scale(image, (old_x * scale, old_y * scale))
-    screen.blit(image, (x, y))
-
 
 # Game looop
 while running:
@@ -93,24 +77,14 @@ while running:
     deck_y = 350
     if deck != []:
         for i in range(0, len(deck)):
-            image_card = pygame.image.load("Cards/" + deck[i] + ".png")
-            image_card = pygame.Surface.convert_alpha(image_card)
-            image_card = pygame.transform.scale(
-                image_card, (500 * card_scale, 726 * card_scale)
-            )
-            screen.blit(image_card, (deck_x + (500 * card_scale + 10) * i, deck_y))
+            draw_image("Cards/" + deck[i] + ".png", deck_x + (500 * card_scale + 10) * i, deck_y, card_scale)
 
     # Display dealer cards
     ddeck_x = 165
     ddeck_y = 30
     if ddeck != []:
         for i in range(0, len(ddeck)):
-            image_card = pygame.image.load("Cards/" + ddeck[i] + ".png")
-            image_card = pygame.Surface.convert_alpha(image_card)
-            image_card = pygame.transform.scale(
-                image_card, (500 * card_scale, 726 * card_scale)
-            )
-            screen.blit(image_card, (ddeck_x + (500 * card_scale + 10) * i, ddeck_y))
+            draw_image("Cards/" + ddeck[i] + ".png", ddeck_x + (500 * card_scale + 10) * i, ddeck_y, card_scale)
 
     # hit button
     if hitb_rect.collidepoint(mouse_pos):
