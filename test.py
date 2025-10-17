@@ -1,6 +1,8 @@
 import pygame
 import sys
-from card_randomizer import shuffle, shuffle_add, shuffle_remove
+import time
+from card_randomizer import shuffle, shuffle_add, shuffle_remove, count_score
+from draw import draw_text
 
 pygame.init()
 running = True
@@ -13,15 +15,15 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("BlackJack")
 
 
-specialcardvalues = {"a": 11, "j": 10, "k": 10, "q": 10}
-
 image_card = pygame.image.load("Cards/Empty.png")
 deck = []
-shuffle_deck = True
+ddeck = ["3_of_h", "back", "back"]
+shuffle_deck = False  # start with emty deck
 card_scale = 0.25
 
-score = 0
 
+score = 0
+dscore = 0
 
 # text font
 font = pygame.font.Font("Images/JMH Typewriter-Black.otf", 30)
@@ -62,6 +64,9 @@ def draw_image(file, x, y, scale):
 
 # Game looop
 while running:
+    # Loop end
+    dt = clock.tick(60)
+    print(f"fps: {1000/dt}")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -79,7 +84,7 @@ while running:
 
     # Shuffle cards (once)
     if shuffle_deck:
-        deck = shuffle(3)
+        deck = shuffle(1)
         print(deck[0])
         shuffle_deck = False
 
@@ -94,6 +99,18 @@ while running:
                 image_card, (500 * card_scale, 726 * card_scale)
             )
             screen.blit(image_card, (deck_x + (500 * card_scale + 10) * i, deck_y))
+
+    # Display dealer cards
+    ddeck_x = 165
+    ddeck_y = 30
+    if ddeck != []:
+        for i in range(0, len(ddeck)):
+            image_card = pygame.image.load("Cards/" + ddeck[i] + ".png")
+            image_card = pygame.Surface.convert_alpha(image_card)
+            image_card = pygame.transform.scale(
+                image_card, (500 * card_scale, 726 * card_scale)
+            )
+            screen.blit(image_card, (ddeck_x + (500 * card_scale + 10) * i, ddeck_y))
 
     # hit button
     if hitb_rect.collidepoint(mouse_pos):
@@ -118,20 +135,17 @@ while running:
     else:
         draw_image("Images/wood_button.png", standb_x, standb_y, standb_size)
         draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 50, 20, 20)
-
+    # player score
     draw_image("Images/wood_board.png", 830, 360, 0.16)
     draw_text(str(round(score)), 830, 360, 169, 169, 51, 20, 9)
+    # dealers score
+    draw_image("Images/wood_board.png", 830, 30, 0.16)
+    draw_text(str(round(dscore)), 830, 30, 169, 169, 51, 20, 9)
+    score = count_score(deck)
+    dscore = count_score(ddeck)
 
-    # score counter
-    score = 0
-    for i in range(len(deck)):
-        if deck[i][0] in ["a", "j", "k", "q"]:
-            score = score + specialcardvalues.get(deck[i][0])
-        else:
-            score = score + float(deck[i][0])
+    draw_image("Images/dealer.png", 2, 20, 0.4)
 
-    # Loop end
-    dt = clock.tick(60) / 1000
     pygame.display.flip()
 
-pygame.quit
+pygame.quit()
