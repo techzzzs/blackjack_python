@@ -31,7 +31,7 @@ def shuffle_add(prev_deck):
             else:
                 testscore=count_score(cards)
                 split = card.split("_")
-                print(split)
+                
                 
                 if split[0] == "ace":
                     if testscore <=10:

@@ -44,13 +44,17 @@ standb_w = 140
 standb_h = 78
 standb_rect = pygame.Rect(standb_x, standb_y, standb_w, standb_h)
 
+gamestate = 1
+# gamestate = 0 nozime ending screen
+# gamestate = 1 nozime player gajiens
+# gamestate = 2 nozime dealera gajiens
+# gamestate = 3 nozime betting round
 
+startingHand = []
+dealerHand = []
 
 # Game looop
 while running:
-    # Loop end
-    dt = clock.tick(60)
-    print(f"fps: {1000/dt}")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -64,57 +68,84 @@ while running:
     if not mouse_pressed:
         hit = False
         stand = False
-    # Loop code
 
-    # Shuffle cards (once)
-    if shuffle_deck:
-        deck = shuffle(1)
-        print(deck[0])
-        shuffle_deck = False
+    # hit button
+    if hitb_rect.collidepoint(mouse_pos):
+        draw_image("Images/wood_button_dark.png", hitb_x, hitb_y, hitb_size)
+        draw_text("Hit", hitb_x, hitb_y, hitb_w, hitb_h, 0, 0, 0,30)
+        if mouse_pressed and not hit:
+            print("Hit")
+            hit = True
+    else:
+        draw_image("Images/wood_button.png", hitb_x, hitb_y, hitb_size)
+        draw_text("Hit", hitb_x, hitb_y, hitb_w, hitb_h, 50, 20, 20,30)
+
+    # stand button
+    if standb_rect.collidepoint(mouse_pos):
+        draw_image("Images/wood_button_dark.png", standb_x, standb_y, standb_size)
+        draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 0, 0, 0,30)
+        if mouse_pressed and not stand:
+            print("Stand")
+            stand = True
+    else:
+        draw_image("Images/wood_button.png", standb_x, standb_y, standb_size)
+        draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 50, 20, 20,30)
+
+    # player gajiens
+    
 
     # Display cards
     deck_x = 165
     deck_y = 350
     if deck != []:
         for i in range(0, len(deck)):
-            draw_image("Cards/" + deck[i] + ".png", deck_x + (500 * card_scale + 10) * i, deck_y, card_scale)
+            draw_image(
+                "Cards/" + deck[i] + ".png",
+                deck_x + (500 * card_scale + 10) * i,
+                deck_y,
+                card_scale,
+            )
 
     # Display dealer cards
     ddeck_x = 165
     ddeck_y = 30
     if ddeck != []:
         for i in range(0, len(ddeck)):
-            draw_image("Cards/" + ddeck[i] + ".png", ddeck_x + (500 * card_scale + 10) * i, ddeck_y, card_scale)
+            draw_image(
+                "Cards/" + ddeck[i] + ".png",
+                ddeck_x + (500 * card_scale + 10) * i,
+                ddeck_y,
+                card_scale,
+            )
 
     # hit button
     if hitb_rect.collidepoint(mouse_pos):
         draw_image("Images/wood_button_dark.png", hitb_x, hitb_y, hitb_size)
-        draw_text("Hit", hitb_x, hitb_y, hitb_w, hitb_h, 0, 0, 0)
+        draw_text("Hit", hitb_x, hitb_y, hitb_w, hitb_h, 0, 0, 0,30)
         if mouse_pressed and not hit:
             print("Hit")
             hit = True
             deck = shuffle_add(deck)
-
     else:
         draw_image("Images/wood_button.png", hitb_x, hitb_y, hitb_size)
-        draw_text("Hit", hitb_x, hitb_y, hitb_w, hitb_h, 50, 20, 20)
+        draw_text("Hit", hitb_x, hitb_y, hitb_w, hitb_h, 50, 20, 20,30)
     # stand button
     if standb_rect.collidepoint(mouse_pos):
         draw_image("Images/wood_button_dark.png", standb_x, standb_y, standb_size)
-        draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 0, 0, 0)
+        draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 0, 0, 0,30)
         if mouse_pressed and not stand:
             print("Stand")
             deck = shuffle_remove(deck)
             stand = True
     else:
         draw_image("Images/wood_button.png", standb_x, standb_y, standb_size)
-        draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 50, 20, 20)
+        draw_text("Stand", standb_x, standb_y, standb_w, standb_h, 50, 20, 20,30)
     # player score
     draw_image("Images/wood_board.png", 830, 360, 0.16)
-    draw_text(str(round(score)), 830, 360, 169, 169, 51, 20, 9)
+    draw_text(str(round(score)), 830, 360, 169, 169, 51, 20, 9,30)
     # dealers score
     draw_image("Images/wood_board.png", 830, 30, 0.16)
-    draw_text(str(round(dscore)), 830, 30, 169, 169, 51, 20, 9)
+    draw_text(str(round(dscore)), 830, 30, 169, 169, 51, 20, 9,30)
     score = count_score(deck)
     dscore = count_score(ddeck)
 
