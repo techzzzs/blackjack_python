@@ -6,7 +6,55 @@ from card_randomizer import shuffle, shuffle_add, shuffle_remove, count_score
 from draw import draw_text, draw_image, draw_image_c
 
 pygame.init()
+pygame.mixer.init()
 running = True
+clock = pygame.time.Clock()
+
+# music settings
+music = True
+if music:
+    pygame.mixer.music.load("Sounds/background_music.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.1)
+
+
+sounds = {}
+
+
+def play(path):
+    key = path
+    if key in sounds:
+        note = sounds[key]
+        note.play()
+    else:
+        sounds[key] = pygame.mixer.Sound("Sounds/" + str(key))
+        print(sounds[key])
+        note = sounds[key]
+        note.play()
+
+
+global mouse_pos
+mouse_pos = (0, 0)
+global played
+played = False
+
+
+def play_hover(path, rect):
+    global played
+    global mouse_pos
+    if rect.collidepoint(mouse_pos):
+        key = path
+        if not played:
+            if key in sounds:
+                note = sounds[key]
+                note.play()
+            else:
+                sounds[key] = pygame.mixer.Sound("Sounds/" + str(key))
+                note = sounds[key]
+                note.play()
+            played = True
+    else:
+        played = False
 
 
 # window settings
@@ -61,20 +109,26 @@ pressed = False
 score = 0
 dscore = 0
 timer = 0
+blink_1sec = 0
 card_added = True
 dealer_hit = False
 dealer_stand = False
 player_stand = False
 money_delt = False
+enable_timer = False
 
 # game loop
 running = True
 while running:
     dt = clock.tick(60)
-    timer += dt
+    blink_1sec += dt
 
-    if timer >= 1000:
-        timer -= 1000
+    if enable_timer:
+        timer += dt
+
+    if blink_1sec >= 1000:
+        blink_1sec -= 1000
+
     mouse_pos = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -86,18 +140,23 @@ while running:
         # state 0
         if state == 0:
             if rect_play.collidepoint(event.pos):
+                play("button.mp3")
                 state = 1
 
         # state 1
         if state == 1 and not pressed:
+            play("button.mp3")
             if rect_allout.collidepoint(event.pos) and bet > 0:
+                play("button.mp3")
                 balance = balance + bet
                 bet = 0
             if balance > 0:
                 if rect_allin.collidepoint(event.pos):
+
                     bet = bet + balance
                     balance = 0
                 if rect_half.collidepoint(event.pos):
+
                     difference = round(balance / 2)
                     bet = bet + difference
                     balance = balance - difference
@@ -105,13 +164,16 @@ while running:
                 # +100 or -100 buttons
                 if balance >= 100:
                     if rect_100plus.collidepoint(event.pos):
+
                         bet = bet + 100
                         balance = balance - 100
             if bet >= 100:
                 if rect_100minus.collidepoint(event.pos):
+
                     bet = bet - 100
                     balance = balance + 100
             if rect_submit.collidepoint(event.pos):
+
                 state = 2
                 card_added = False
 
@@ -119,8 +181,10 @@ while running:
         if state == 2:
             if not pressed:
                 if rect_hit.collidepoint(event.pos):
+                    play("button.mp3")
                     card_added = False
                 if rect_stand.collidepoint(event.pos):
+                    play("button.mp3")
                     player_stand = True
 
         # play again
@@ -133,6 +197,10 @@ while running:
                     score = 0
                     dscore = 0
                     bet = 0
+                    card_added = True
+                    dealer_hit = False
+                    dealer_stand = False
+                    player_stand = False
                     money_delt = False
 
         pressed = True
@@ -146,12 +214,14 @@ while running:
         else:
             if score < 21:
                 if not card_added:
+                    play("card_take.mp3")
                     deck = shuffle_add(deck)
                     score = count_score(deck)
                     card_added = True
                     state = 3
                 if player_stand:
                     state = 3
+                    timer = 0
                 if score > 21:
                     print("player got above 21")
                     state = 5
@@ -162,16 +232,21 @@ while running:
             if not dealer_hit:
                 dealer_hit = True
                 timer = 0
+                enable_timer = True
         else:
             if not dealer_stand:
                 dealer_stand = True
                 timer = 0
+                enable_timer = True
         if dealer_hit and timer >= 900:
+            play("card_take.mp3")
             ddeck = shuffle_add(ddeck)
             dscore = count_score(ddeck)
             state = 2
             dealer_hit = False
+            enable_timer = False
         if dealer_stand and timer >= 900:
+            enable_timer = False
             state = 2
             dealer_stand = False
             if player_stand:
@@ -208,13 +283,16 @@ while running:
 
     # state 0
     if state == 0:
+        play_hover("woosh.mp3", rect_play)
         draw_image_c("Images/blackjack_main (Small).png", screen_w, screen_h - 180, 1)
         if rect_play.collidepoint(mouse_pos):
+
             draw_image("Images/play.png", 649 - 12, 580 - 5, 1.1)
         else:
             draw_image("Images/play.png", 649, 580, 1)
 
     if state >= 1:
+
         # draw player cards
         for i in range(0, len(deck)):
             draw_image("Cards/" + deck[i] + ".png", 300 + i * 190, 550, 1)
@@ -225,10 +303,12 @@ while running:
 
         # buttons
         if rect_hit.collidepoint(mouse_pos):
+
             draw_image("Images/wood_button_hit_d.png", 30, 550, 1)
         else:
             draw_image("Images/wood_button_hit.png", 30, 550, 1)
         if rect_stand.collidepoint(mouse_pos):
+
             draw_image("Images/wood_button_stand_d.png", 30, 700, 1)
         else:
             draw_image("Images/wood_button_stand.png", 30, 700, 1)
@@ -249,7 +329,7 @@ while running:
             if rect_submit.collidepoint(mouse_pos):
                 draw_text(str(bet) + " $", 618, 360, 300, 100, 255, 255, 255, 90)
             else:
-                if timer >= 500:
+                if blink_1sec >= 500:
                     draw_text(str(bet) + " $", 618, 360, 300, 100, 230, 184, 21, 80)
                 else:
                     draw_text(str(bet) + " $", 618, 360, 300, 100, 255, 255, 255, 80)
@@ -320,6 +400,8 @@ while running:
             pygame.draw.rect(screen, (109, 73, 26), rect_playagain, border_radius=5)
             draw_text("Play Again", 468, 600, 600, 100, 51, 38, 23, 64)
 
+    fps = int(clock.get_fps())
+    draw_text(str(fps), 10, 10, 10, 10, 10, 10, 10, 12)
     pygame.display.flip()
 
 
