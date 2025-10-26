@@ -173,7 +173,7 @@ while running:
                     bet = bet - 100
                     balance = balance + 100
             if rect_submit.collidepoint(event.pos):
-
+                play("coin_long.mp3")
                 state = 2
                 card_added = False
 
@@ -251,30 +251,39 @@ while running:
             dealer_stand = False
             if player_stand:
                 if score == dscore:
+
                     print("you both got less then 21 and it is a draw")
+
                     state = 6
                 else:
                     if score < dscore:
+
                         print("you both got less then 21 but dealer still won")
                         state = 5
                     else:
+
                         state = 4
                         print("you both got less then 21 but you still won")
 
         if dscore > 21:
+
             print("Dealer lost")
             state = 4
 
     if state == 4 and not money_delt:
+        play("coin_long.mp3")
         balance = balance + (bet * 2)
         bet = 0
         money_delt = True
     if state == 5 and not money_delt:
+        play("coin_light.mp3")
+        bet = 0
+
+    if state == 6 and not money_delt:
+        play("coin_long.mp3")
+        balance = balance + bet
         bet = 0
         money_delt = True
-    if state == 6 and not money_delt:
-        bet = 0
-        balance = balance + bet
 
     # drawing
 
