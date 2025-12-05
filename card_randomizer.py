@@ -5,79 +5,60 @@ signs = ["c", "d", "h", "s"]
 
 max_cards = len(numbers) * len(signs)
 
-
-def shuffle(Card_count):
-    cards = []
-    done = 0
-    for i in range(0, Card_count):
-        while done < Card_count:
-            card = random.choice(numbers) + "_of_" + random.choice(signs)
-            if card in cards:
-                pass
-            else:
-                cards.append(card)
-                done = done + 1
-    return cards
-
-
-def shuffle_add(prev_deck):
-    cards = prev_deck
-    if len(cards) < max_cards:
-        done = 0
-        while done == 0:
-            card = random.choice(numbers) + "_of_" + random.choice(signs)
-            if card in cards:
-                pass
-            else:
-                testscore=count_score(cards)
-                split = card.split("_")
-                
-                
-                if split[0] == "ace":
-                    if testscore <=10:
-                        cards.append("ace"+"_"+split[1]+"_"+split[2])
-                        done = 1
-                    else: 
-                        cards.append("aoe"+"_"+split[1]+"_"+split[2])
-                        done = 1
-                else:
-                    cards.append(card)
-                    done = 1
-    else:
-        print("All cards used")
-    return cards
-
-
-def shuffle_remove(prev_deck):
-    cards = prev_deck
-    if len(cards) >= 1:
-        cards.pop()
-    return cards
-
-
-
-
 cardvalues = {
-    "1_": 1,
-    "2_": 2,
-    "3_": 3,
-    "4_": 4,
-    "5_": 5,
-    "6_": 6,
-    "7_": 7,
-    "8_": 8,
-    "9_": 9,
-    "10": 10,
-    "ac": 11,
-    "ja": 10,
-    "ki": 10,
-    "qu": 10,
-    "ao": 1,
+    "2_": 2, "3_": 3, "4_": 4, "5_": 5, "6_": 6,
+    "7_": 7, "8_": 8, "9_": 9, "10": 10,
+    "ac": 11, "ao": 1,
+    "ja": 10, "ki": 10, "qu": 10
 }
 
+
+def shuffle(count):
+    """Generate a unique deck subset."""
+    result = []
+    while len(result) < count:
+        card = random.choice(numbers) + "_of_" + random.choice(signs)
+        if card not in result:
+            result.append(card)
+    return result
+
+
+def shuffle_add(deck):
+    """Adds a random unused card with correct ACE handling."""
+    if len(deck) >= max_cards:
+        return deck
+
+    while True:
+        num = random.choice(numbers)
+        sign = random.choice(signs)
+        card = f"{num}_of_{sign}"
+
+        if card in deck:
+            continue
+
+        # ACE logic
+        if num == "ace":
+            score_now = count_score(deck)
+            if score_now <= 10:
+                deck.append(f"ace_of_{sign}")     # high ace
+            else:
+                deck.append(f"aoe_of_{sign}")     # low ace (ao)
+        else:
+            deck.append(card)
+
+        return deck
+
+
+def shuffle_remove(deck):
+    if deck:
+        deck.pop()
+    return deck
+
+
 def count_score(deck):
-    # score counter
     score = 0
-    for i in range(len(deck)):
-        score = score + cardvalues.get(deck[i][0:2], 0)
+    for c in deck:
+        prefix = c[:2]  # "ac", "ao", "10", "ki", etc.
+        score += cardvalues.get(prefix, 0)
+
     return score
