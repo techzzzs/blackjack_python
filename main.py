@@ -14,10 +14,14 @@ pygame.display.set_caption("BlackJack")
 
 left_click_active=False
 deck=[]
-# shuffle_add(deck)
+shuffle_add(deck)
+shuffle_add(deck)
+print(deck)
 def draw_deck(x,y,deck,size):
-    for i in range(len(deck)):
-        draw_img(screen,deck[i],100,100,1)
+    print("yes")
+    for i in range(0,len(deck)):
+        print("Cards/"+deck[i]+".png")
+        draw_img(screen,("Cards/"+deck[i]+".png"),x+i*200,y,size)
 
 
 
@@ -48,7 +52,9 @@ while running:
                 left_click_active = False
                 
 
-    ### TITTLE SCREEN ####
+    ##############################
+    # TITL SCREEN
+    ##############################
     if state == 0:
         play_rect=draw_img(screen, "Images/play.png", 860, 750, 1,True)
         draw_img(screen,"Images/background.jpg",0,0,0.7)
@@ -61,8 +67,12 @@ while running:
         if left_button and play_rect.collidepoint(mouse_pos):
             state=1
 
+    ##############################
+    # START SCREEN
+    ##############################
     if state == 1:
         draw_img(screen,"Images/background.jpg",0,0,0.6)
+        draw_deck(500,690,deck,1)
 
     pygame.display.flip()
 

@@ -9,7 +9,7 @@ def load_texture(path, scale):
     if key in textures:
         return textures[key]
 
-    image = pygame.image.load(default_img_path+path).convert_alpha()
+    image = pygame.image.load(path).convert_alpha()
     w, h = image.get_size()
     image = pygame.transform.scale(image, (int(w * scale), int(h * scale)))
     textures[key] = image
