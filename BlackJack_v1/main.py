@@ -153,14 +153,22 @@ while running:
                 state = 3
 
     # ---------------- STATE 3 — DEALER TURN ----------------
-    if state == 3:
-        dscore = count_score(ddeck)
-        # Dealer hits until 17+
-        while dscore < 17:
-            pygame.time.wait(300)
+if state == 3:
+    dscore = count_score(ddeck)
+
+    # Reveal the hidden card only once
+    if dealer_has_hole:
+        ddeck = shuffle_add(ddeck)
+        dealer_has_hole = False
+
+    # Dealer hits ONE card per frame (safe!) instead of freezing the loop
+    if dscore < 17:
+        dealer_hit_timer = pygame.time.get_ticks()  # create delay
+        if not hasattr(state, "last_hit") or pygame.time.get_ticks() - state.last_hit > 300:
             ddeck = shuffle_add(ddeck)
-            dscore = count_score(ddeck)
-        # Determine result
+            state.last_hit = pygame.time.get_ticks()
+    else:
+        # Evaluate result once dealer is done
         score = count_score(deck)
         if dscore > 21 or score > dscore:
             state = 4
@@ -168,6 +176,7 @@ while running:
             state = 5
         else:
             state = 6
+
 
     # ---------------- PAYOUTS ----------------
     if state == 4:  # win
