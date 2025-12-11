@@ -2,7 +2,6 @@ import pygame
 
 textures = {}
 texts = {}
-default_img_path = "BlackJack_v2/"
 
 def load_texture(path, scale):
     key = (path, scale)
@@ -35,7 +34,7 @@ def draw_img(surface, file, x, y, scale,only_rect=False):
     rect = img.get_rect(topleft=(x, y))
     if not only_rect:
         surface.blit(img, rect)
-    rect2=pygame.Rect(x,y,img.get_width(),img.get_width())
+    rect2=pygame.Rect(x,y,img.get_width(),img.get_height())
     return rect2
 
 

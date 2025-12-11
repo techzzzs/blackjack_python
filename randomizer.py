@@ -75,9 +75,13 @@ cardvalues = {
     "ao": 1,
 }
 
-def count_score(deck):
+def count_score(deck,first_hidden=False):
     # score counter
     score = 0
-    for i in range(len(deck)):
-        score = score + cardvalues.get(deck[i][0:2], 0)
+    if first_hidden:
+        for i in range(1,len(deck)):
+            score = score + cardvalues.get(deck[i][0:2], 0)
+    else:
+        for i in range(len(deck)):
+            score = score + cardvalues.get(deck[i][0:2], 0)
     return score
