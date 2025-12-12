@@ -101,7 +101,7 @@ while running:
         if event.type == pygame.QUIT:
             with open("demofile.txt", "w") as f:
                 money=balance+bet
-                f.write("Woops! I have deleted the content!")
+                f.write(moeny)
             running = False
 
         if event.type == pygame.KEYDOWN:
@@ -270,7 +270,7 @@ while running:
             buttons[5]["hovering"] = True
             if left_button:
                 play("button.mp3")
-                if state==1:
+                if state==1 and bet >0:
                     
                     state=2 #CHANGE STATE ################
                     first_dealt=False
@@ -323,7 +323,7 @@ while running:
             buttons[6]["hovering"] = False
 
 
-        if player_score>=21 and state>=4:
+        if player_score>=21 and state>=3:
             state=5 #count score
         ##############################
         # DEALERS TURN
@@ -367,15 +367,17 @@ while running:
                 bet=0
                 # play("coin_light.mp3")
                 money_delt=True
-            if state==7 and not money_delt:
+            if state==7 :
                 balance+=bet*2
+                if bet != 0:
+                    play("coin_light.mp3")
                 bet=0
-                play("coin_light.mp3")
                 money_delt=True
             if state==8:
                 balance+=bet
+                if bet != 0:
+                    play("coin_light.mp3")
                 bet=0
-                play("coin_light.mp3")
                 money_delt=True
         ######## RESET #########
         if state>5:
