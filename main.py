@@ -5,6 +5,15 @@ import random
 from draw import draw_img,draw_img_c,draw_text
 from randomizer import shuffle_add, count_score
 
+open("User_data.txt", "a").close()
+with open("User_data.txt") as file:
+    balance=int(file.read())
+    print(file.read())
+
+bet=0
+money_delt=False
+female_counter=0
+
 
 instruc=["","Make Your Bet (Confirm with hit)","Dealing cards","Hit or Stand?","Dealers Turn","Counting score","You Lost, haha","You Won","It's a draw"]
 pygame.init()
@@ -41,9 +50,7 @@ ddeck=[]
 timer=0
 
 
-balance=1000
-bet=0
-money_delt=False
+
 
 
 
@@ -92,10 +99,16 @@ while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            with open("demofile.txt", "w") as f:
+                money=balance+bet
+                f.write("Woops! I have deleted the content!")
             running = False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                with open("User_data.txt", "w") as f:
+                    money=balance+bet
+                    f.write(str(money))
                 running=False
 
         
@@ -139,12 +152,16 @@ while running:
         #dealer
         if draw_img(screen,"Images/dealer.png",220,130,1,True).collidepoint(mouse_pos) and left_button:
             play("haha" + str(random.choice(range(1, 17))) + ".mp3")
+            female_counter+=1
         draw_img(screen,"Images/dealer.png",220,130,1)
+
+        if female_counter>=20:
+            balance=1000
+            female_counter=0
 
         if first_hidden:
             draw_img(screen,"Cards/back2.png",500,140,1)
 
-        draw_text(screen,state,400,110,20,20,255,255,255,12)
 
         draw_text(screen,fps,200,110,20,20,14, 64, 10,12)
         draw_text(screen,"Current bet:",855,542,200,60,74, 37, 16,24)
