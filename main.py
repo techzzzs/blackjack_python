@@ -6,8 +6,19 @@ import random
 from draw import draw_img,draw_img_c,draw_text
 from randomizer import shuffle_add, count_score
 
-open("User_data.txt", "a").close()
-with open("User_data.txt") as file:
+
+import sys, os
+
+def resource_path(path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, path)
+    return path
+
+
+userdata_path = resource_path("User_data.txt")
+open(userdata_path, "a").close()
+with open(userdata_path, "r+") as file:
+
     balance=int(file.read())
     print(file.read())
 
@@ -25,11 +36,11 @@ pygame.mixer.init()
 sounds = {}
 def play(path):
     if path not in sounds:
-        sounds[path] = pygame.mixer.Sound("Sounds/" + path)
+        sounds[path] = pygame.mixer.Sound(resource_path("Sounds/" + path))
     sounds[path].play()
 
 
-pygame.mixer.music.load("Sounds/background_music.mp3")
+pygame.mixer.music.load(resource_path("Sounds/background_music.mp3"))
 pygame.mixer.music.play(loops=-1)
 pygame.mixer.music.set_volume(0.5)
 
@@ -50,9 +61,6 @@ first_hidden=False
 deck=[]
 ddeck=[]
 timer=0
-
-
-
 
 
 
@@ -101,16 +109,20 @@ while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            with open("User_data.txt", "w") as f:
-                money=balance+bet
-                f.write(str(money))
-            running = False
+            userdata_path = resource_path("User_data.txt")
+            open(userdata_path, "a").close()
+            with open(userdata_path, "r+") as file:
+                money = balance + bet
+                file.write(str(money))
+            running=False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                with open("User_data.txt", "w") as f:
-                    money=balance+bet
-                    f.write(str(money))
+                userdata_path = resource_path("User_data.txt")
+                open(userdata_path, "a").close()
+                with open(userdata_path, "r+") as file:
+                    money = balance + bet
+                    file.write(str(money))
                 running=False
 
         
@@ -167,10 +179,12 @@ while running:
         if draw_img(screen,"Images/exit.png",1685,110,0.5,True).collidepoint(mouse_pos):
             draw_img(screen,"Images/exit.png",1679,107,0.6)
             if left_button:
-                with open("User_data.txt", "w") as f:
-                    money=balance+bet
-                    f.write(str(money))
-                running = False
+                userdata_path = resource_path("User_data.txt")
+                open(userdata_path, "a").close()
+                with open(userdata_path, "r+") as file:
+                    money = balance + bet
+                    file.write(str(money))
+                running=False
         else:
             draw_img(screen,"Images/exit.png",1685,110,0.5)
 

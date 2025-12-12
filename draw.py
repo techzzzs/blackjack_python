@@ -1,18 +1,34 @@
 import pygame
+import sys, os
 
 textures = {}
 texts = {}
 
-def load_texture(path, scale):
-    key = (path, scale)
-    if key in textures:
-        return textures[key]
+# ------------- RESOURCE PATH (for PyInstaller) -------------
+def resource_path(path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, path)
+    return path
 
-    image = pygame.image.load(path).convert_alpha()
-    w, h = image.get_size()
-    image = pygame.transform.scale(image, (int(w * scale), int(h * scale)))
-    textures[key] = image
-    return image
+# ------------- TEXTURE CACHE -------------
+_texture_cache = {}
+
+def load_texture(path, scale):
+    key = (path, float(scale))
+
+    if key in _texture_cache:
+        return _texture_cache[key]
+
+    full_path = resource_path(path)
+
+    base = pygame.image.load(full_path).convert_alpha()
+
+    # scale ONCE and cache forever
+    w, h = base.get_width(), base.get_height()
+    img = pygame.transform.smoothscale(base, (int(w * scale), int(h * scale)))
+
+    _texture_cache[key] = img
+    return img
 
 
 def draw_text(surface, text, x, y, w, h, r, g, b, size):
@@ -20,7 +36,7 @@ def draw_text(surface, text, x, y, w, h, r, g, b, size):
     if key in texts:
         surf = texts[key]
     else:
-        font = pygame.font.Font("Images/JMH Typewriter-Black.otf", size)
+        font = pygame.font.Font(resource_path("Images/JMH Typewriter-Black.otf"), size)
         surf = font.render(str(text), True, (r, g, b))
         texts[key] = surf
 
