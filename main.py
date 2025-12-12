@@ -1,5 +1,6 @@
 import pygame
 import sys
+import webbrowser
 import math
 import random
 from draw import draw_img,draw_img_c,draw_text
@@ -14,7 +15,7 @@ bet=0
 bet_is_zero=False
 money_delt=False
 female_counter=0
-
+# webbrowser.open("amazon.com")
 
 instruc=["","Make Your Bet (Confirm with hit)","Dealing cards","Hit or Stand?","Dealers Turn","Counting score","You Lost, haha","You Won","It's a draw"]
 pygame.init()
@@ -100,9 +101,9 @@ while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            with open("demofile.txt", "w") as f:
+            with open("User_data.txt", "w") as f:
                 money=balance+bet
-                f.write(money)
+                f.write(str(money))
             running = False
 
         if event.type == pygame.KEYDOWN:
@@ -144,6 +145,8 @@ while running:
     ##############################
     if state >=1:
 
+
+        
         draw_img(screen,"Images/background.jpg",0,0,0.6)
         
         draw_img_c(screen,"Images/wide_board.png",WIDTH,HEIGHT,1)
@@ -159,6 +162,17 @@ while running:
         if female_counter>=20:
             balance=1000
             female_counter=0
+
+        # EXIT BUTTON ###########
+        if draw_img(screen,"Images/exit.png",1685,110,0.5,True).collidepoint(mouse_pos):
+            draw_img(screen,"Images/exit.png",1679,107,0.6)
+            if left_button:
+                with open("User_data.txt", "w") as f:
+                    money=balance+bet
+                    f.write(str(money))
+                running = False
+        else:
+            draw_img(screen,"Images/exit.png",1685,110,0.5)
 
         if first_hidden:
             draw_img(screen,"Cards/back2.png",500,140,1)
