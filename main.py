@@ -170,7 +170,7 @@ while running:
         draw_text(screen,str(balance)+"$",1420,420,280,70,250,250,250,54)
         draw_text(screen,instruc[state],855,584,200,60,204, 176, 114,18)
         if bet_is_zero:
-            draw_text(screen,"Bet must be higher then 0",855,484,200,60,204, 176, 114,18)
+            draw_text(screen,"Bet must be higher then 0",855,434,200,60,254, 120, 90,18)
 
         rect_allin=pygame.Rect(1420, 500, 280, 40)
         rect_allout=pygame.Rect(1420, 550, 135, 40)
@@ -336,7 +336,7 @@ while running:
         ##############################
         if state==4:
             timer+=1
-            if dealer_score<=17:
+            if dealer_score<17:
                 if timer >=200:
                     shuffle_add(ddeck)
                     play("card_take.mp3")
