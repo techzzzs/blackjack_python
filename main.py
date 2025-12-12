@@ -11,6 +11,7 @@ with open("User_data.txt") as file:
     print(file.read())
 
 bet=0
+bet_is_zero=False
 money_delt=False
 female_counter=0
 
@@ -101,7 +102,7 @@ while running:
         if event.type == pygame.QUIT:
             with open("demofile.txt", "w") as f:
                 money=balance+bet
-                f.write(moeny)
+                f.write(money)
             running = False
 
         if event.type == pygame.KEYDOWN:
@@ -168,6 +169,8 @@ while running:
         draw_text(screen,str(bet)+"$",855,500,200,60,240,240,240,64)
         draw_text(screen,str(balance)+"$",1420,420,280,70,250,250,250,54)
         draw_text(screen,instruc[state],855,584,200,60,204, 176, 114,18)
+        if bet_is_zero:
+            draw_text(screen,"Bet must be higher then 0",855,484,200,60,204, 176, 114,18)
 
         rect_allin=pygame.Rect(1420, 500, 280, 40)
         rect_allout=pygame.Rect(1420, 550, 135, 40)
@@ -270,11 +273,14 @@ while running:
             buttons[5]["hovering"] = True
             if left_button:
                 play("button.mp3")
-                if state==1 and bet >0:
-                    
-                    state=2 #CHANGE STATE ################
-                    first_dealt=False
-                    timer=0
+                if state==1:
+                    if bet>0:
+                        state=2 #CHANGE STATE ################
+                        first_dealt=False
+                        timer=0
+                        bet_is_zero=False
+                    else:
+                        bet_is_zero=True
 
                 if left_button and state==3:
                     play("card_take.mp3")
