@@ -341,7 +341,7 @@ while running:
                     shuffle_add(ddeck)
                     play("card_take.mp3")
                     timer=0
-            if dealer_score>17:
+            if dealer_score>=17:
                 state=5
 
 
@@ -350,6 +350,11 @@ while running:
         ##############################
         if state==5:
             money_delt=False
+            if player_score ==21:
+                if dealer_score==21:
+                    state=8 # draw
+                else:
+                    state=7 # player won
             if player_score >21:
                 state=6 # player lost
             if player_score <21:
@@ -359,11 +364,7 @@ while running:
                     state=6 # player lost
                 else:
                     state=7 # player won
-            if player_score ==21:
-                if dealer_score==21:
-                    state=8 # draw
-                else:
-                    state=7 # player won
+            
 
         ##############################
         # MONEY DEALING
