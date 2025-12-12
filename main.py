@@ -123,6 +123,7 @@ while running:
                 with open(userdata_path, "r+") as file:
                     money = balance + bet
                     file.write(str(money))
+                    print(str(money))
                 running=False
 
         

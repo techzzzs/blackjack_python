@@ -4,13 +4,11 @@ import sys, os
 textures = {}
 texts = {}
 
-# ------------- RESOURCE PATH (for PyInstaller) -------------
 def resource_path(path):
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, path)
     return path
 
-# ------------- TEXTURE CACHE -------------
 _texture_cache = {}
 
 def load_texture(path, scale):
@@ -18,12 +16,9 @@ def load_texture(path, scale):
 
     if key in _texture_cache:
         return _texture_cache[key]
-
     full_path = resource_path(path)
-
     base = pygame.image.load(full_path).convert_alpha()
 
-    # scale ONCE and cache forever
     w, h = base.get_width(), base.get_height()
     img = pygame.transform.smoothscale(base, (int(w * scale), int(h * scale)))
 
