@@ -42,7 +42,7 @@ def play(path):
 
 pygame.mixer.music.load(resource_path("Sounds/background_music.mp3"))
 pygame.mixer.music.play(loops=-1)
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0.2)
 
 hover_played = False
 is_hovering=False
